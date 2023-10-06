@@ -1,7 +1,7 @@
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 import websocket_connection_manager as manager
-
+import controller
 
 app = FastAPI()
 
@@ -15,6 +15,6 @@ async def websocket_endpoint(websocket: WebSocket):
   try:
     while True:
       data = await websocket.receive_text()
-      # await manager.broadcast(data)
+      await controller.handle_message(websocket, data)
   except WebSocketDisconnect:
     await manager.disconnect(websocket)
