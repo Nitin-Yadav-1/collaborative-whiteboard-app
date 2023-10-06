@@ -4,15 +4,18 @@ from fastapi import WebSocket
 
 
 connected_sockets: set[WebSocket] = set()
+lock: asyncio.Lock = asyncio.Lock()
 
 
 async def connect(ws: WebSocket):
-  await ws.accept()
-  connected_sockets.add(ws)
+  async with lock:
+    await ws.accept()
+    connected_sockets.add(ws)
 
 
 async def disconnect(ws: WebSocket):
-  connected_sockets.remove(ws)
+  async with lock:
+    connected_sockets.remove(ws)
 
 
 async def broadcast_to_others(ws: WebSocket, msg: str):
@@ -23,3 +26,7 @@ async def broadcast_to_others(ws: WebSocket, msg: str):
 async def broadcast(msg: str):
   to_send = [socket.send_text(msg) for socket in connected_sockets]
   await asyncio.gather(*to_send)
+
+
+async def send_personal_message(ws: WebSocket, msg: str):
+  await ws.send_text(msg)
