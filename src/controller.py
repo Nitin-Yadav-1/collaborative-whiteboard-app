@@ -10,12 +10,13 @@ async def handle_message(ws: WebSocket, msg: str) -> None:
     return
 
   if message.msg_type == schema.MessageTypeEnum.ping:
-    await manager.send_personal_message(ws, message.model_dump_json())
+    ping_message = message.model_dump_json(exclude='msg_type')
+    await manager.send_personal_message(ws, ping_message)
   elif message.msg_type == schema.MessageTypeEnum.broadcast_to_others:
     await manager.broadcast_to_others(ws, msg)
   elif message.msg_type == schema.MessageTypeEnum.save:
     pass
-  elif message.msg_type == schema.MessageTypeEnum.load:
+  elif message.msg_type == schema.MessageTypeEnum.load_request:
     pass
 
 

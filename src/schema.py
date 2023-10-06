@@ -8,7 +8,8 @@ class MessageTypeEnum(str, Enum):
   ping = "ping"
   broadcast_to_others = "broadcast_to_others"
   save = "save"
-  load = "load"
+  load_request = "load_request"
+  load_response = "load_response"
   invalid = "invalid"
 
 
@@ -25,12 +26,18 @@ class Message(pydantic.BaseModel):
     '''
     if msg.action == 'ping' and msg.data == '':
       msg.msg_type = MessageTypeEnum.ping
+
     elif msg.action == 'broadcast_to_others':
       msg.msg_type = MessageTypeEnum.broadcast_to_others
+
     elif msg.action == 'save':
       msg.msg_type = MessageTypeEnum.save
-    elif msg.action == 'load' and msg.data == '':
-      msg.msg_type = MessageTypeEnum.load
+
+    elif msg.action == 'load_request' and msg.data == '':
+      msg.msg_type = MessageTypeEnum.load_request
+
+    elif msg.action == 'load_response':
+      msg.msg_type = MessageTypeEnum.load_response
 
 
 def create_message(json_data: str) -> Message | None:
