@@ -1,6 +1,5 @@
 
-
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 
 import websocket_connection_manager as manager
 import controller
@@ -8,7 +7,6 @@ import routes.auth
 
 
 app = FastAPI()
-
 app.include_router(routes.auth.router)
 
 
