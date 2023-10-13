@@ -1,26 +1,10 @@
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI
 
-import websocket_connection_manager as manager
-import controller
-import routes.auth
-import routes.user
+from .http_app import router as http_router
+from .websocket_app import router as websocket_router
 
 
 app = FastAPI()
-app.include_router(routes.auth.router)
-app.include_router(routes.user.router)
-
-
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-  '''
-  Establish websocket connection and send/receive messages.
-  '''
-  await manager.connect(websocket)
-  try:
-    while True:
-      data = await websocket.receive_text()
-      await controller.handle_message(websocket, data)
-  except WebSocketDisconnect:
-    await manager.disconnect(websocket)
+app.include_router(http_router)
+app.include_router(websocket_router)

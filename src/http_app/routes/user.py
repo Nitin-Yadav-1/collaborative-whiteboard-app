@@ -2,10 +2,9 @@
 from typing import Annotated
 from fastapi import APIRouter, HTTPException, status, Depends
 
-import model
-import tkn
-from schema.user_schema import UserInfo
-from dependencies import get_user_id
+from .. import model, tkn
+from ..schema.user_schema import UserInfo
+from ..dependencies import get_user_id
 
 
 router = APIRouter(tags=['Users'])

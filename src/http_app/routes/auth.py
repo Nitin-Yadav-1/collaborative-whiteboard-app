@@ -1,14 +1,13 @@
 
 from fastapi import APIRouter, HTTPException, status
-from schema.auth_schema import (
+
+from ..schema.auth_schema import (
   LoginData, 
   RegisterData, 
   LoginResponse, 
   RegisterResponse
 )
-import model
-import password
-import tkn
+from .. import model, password, tkn
 
 
 router = APIRouter(tags=['Authentication'])

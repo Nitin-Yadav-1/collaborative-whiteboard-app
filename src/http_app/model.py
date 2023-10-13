@@ -1,7 +1,7 @@
 
 import mysql.connector
 
-from schema.user_schema import User
+from .schema.user_schema import User
 
 config = {
   "host" : "localhost",
@@ -35,13 +35,6 @@ def execute_query(query: str):
   cursor.close()
   close_db()
   return data
-
-
-async def save_whiteboard_data(data: str):
-  db = get_db()
-  query = f'''INSERT INTO whiteboard (data) VALUES ('{data}')'''
-  execute_query(query)
-  close_db()
 
 
 def get_user_by_email(email: str) -> User | None:

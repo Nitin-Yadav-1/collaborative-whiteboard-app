@@ -1,7 +1,8 @@
 
 from fastapi import WebSocket
-import websocket_connection_manager as manager
-import schema
+from . import websocket_connection_manager as manager
+from . import schema
+from . import model
 
 
 async def handle_message(ws: WebSocket, msg: str) -> None:
@@ -12,10 +13,13 @@ async def handle_message(ws: WebSocket, msg: str) -> None:
   if message.msg_type == schema.MessageTypeEnum.ping:
     ping_message = message.model_dump_json(exclude='msg_type')
     await manager.send_personal_message(ws, ping_message)
+
   elif message.msg_type == schema.MessageTypeEnum.broadcast_to_others:
     await manager.broadcast_to_others(ws, msg)
+
   elif message.msg_type == schema.MessageTypeEnum.save:
     pass
+    
   elif message.msg_type == schema.MessageTypeEnum.load_request:
     pass
 
