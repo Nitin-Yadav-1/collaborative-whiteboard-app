@@ -53,3 +53,4 @@ def create_message(json_data: str) -> Message | None:
     msg = None
 
   return msg
+
