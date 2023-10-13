@@ -8,3 +8,7 @@ class User(BaseModel):
   email: EmailStr
   password: str
   created_at: datetime
+
+class UserInfo(BaseModel):
+  id: int
+  email: EmailStr

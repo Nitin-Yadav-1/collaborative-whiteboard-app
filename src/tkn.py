@@ -14,7 +14,7 @@ def create_token(payload: dict) -> str:
   '''
   data = payload.copy()
   expire_time = datetime.utcnow() + timedelta(seconds=TOKEN_EXPIRE_TIME)
-  data.update({"expire-time": str(expire_time)})
+  data.update({"expire-time": expire_time.strftime("%Y%m%d%H%M%S")})
   token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
   return token
 
@@ -23,6 +23,9 @@ def decode_token(token: str) -> dict | None:
   '''
   Decode the JWT token and return date in payload.
   '''
-  payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+  try:
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+  except JWTError:
+    payload = None
   return payload
 
