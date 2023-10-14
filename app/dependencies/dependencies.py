@@ -41,7 +41,7 @@ def get_user_id(token: Annotated[str, Depends(get_token)]) -> int:
       detail="Misformed credentials"
     )
 
-  expire_time = datetime.strptime(payload['expire-time'], "%Y%m%d%H%M%S")
+  expire_time = payload['expire_time']
   current_time = datetime.utcnow()
 
   if current_time > expire_time:

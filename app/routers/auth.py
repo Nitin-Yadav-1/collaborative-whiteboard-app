@@ -29,7 +29,7 @@ async def login(login_data: LoginData) -> LoginResponse:
       detail='Invalid Credentials'
     )
 
-  token = tkn.create_token({"user_id": user.id})
+  token = tkn.create_token(user.id)
   return LoginResponse(token=token)  
 
 
@@ -47,5 +47,5 @@ async def register(register_data: RegisterData) -> RegisterResponse:
     password=password.generate_hashed_password(register_data.password)
   )
 
-  token = tkn.create_token(payload={"user_id": user.id})
+  token = tkn.create_token(user.id)
   return RegisterResponse(token=token)
