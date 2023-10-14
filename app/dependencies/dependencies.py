@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from fastapi import Header, Depends, HTTPException, status
 
-from . import tkn
+from app.services import tkn
 
 
 def get_token(authorization: Annotated[str | None, Header()] = None) -> str:

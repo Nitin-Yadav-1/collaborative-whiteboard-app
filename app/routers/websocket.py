@@ -1,8 +1,8 @@
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from . import controller
-from . import websocket_connection_manager as manager
+from app.services.websocket_service import controller
+from app.services.websocket_service import websocket_connection_manager as manager
 
 
 router = APIRouter(tags=['WebSocket'])
@@ -20,6 +20,3 @@ async def websocket_endpoint(websocket: WebSocket):
       await controller.handle_message(websocket, data)
   except WebSocketDisconnect:
     await manager.disconnect(websocket)
-
-
-__all__ = ["router"]

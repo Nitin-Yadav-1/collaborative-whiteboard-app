@@ -1,13 +1,14 @@
 
 from fastapi import APIRouter, HTTPException, status
 
-from ..schema.auth_schema import (
+from app.schema.auth_schema import (
   LoginData, 
   RegisterData, 
   LoginResponse, 
   RegisterResponse
 )
-from .. import model, password, tkn
+from app.models import user_model
+from app.services import password, tkn
 
 
 router = APIRouter(tags=['Authentication'])
@@ -15,7 +16,7 @@ router = APIRouter(tags=['Authentication'])
 
 @router.post("/login")
 async def login(login_data: LoginData) -> LoginResponse:
-  user = model.get_user_by_email(login_data.email)
+  user = user_model.get_user_by_email(login_data.email)
   if user is None:
     raise HTTPException(
       status_code=status.HTTP_401_UNAUTHORIZED,
@@ -34,14 +35,14 @@ async def login(login_data: LoginData) -> LoginResponse:
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(register_data: RegisterData) -> RegisterResponse:
-  user = model.get_user_by_email(register_data.email)
+  user = user_model.get_user_by_email(register_data.email)
   if user is not None:
     raise HTTPException(
       status_code=status.HTTP_409_CONFLICT,
       detail="A user with this email already exists."
     )
 
-  user = model.create_user(
+  user = user_model.create_user(
     email=register_data.email, 
     password=password.generate_hashed_password(register_data.password)
   )
