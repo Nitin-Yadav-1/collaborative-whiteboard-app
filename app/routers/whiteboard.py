@@ -1,42 +1,39 @@
 
-import os
-
-from dotenv import load_dotenv
 from typing import Annotated
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from app.dependencies.dependencies import get_user_id
-from app.schema.whiteboard_schema import WhiteboardInfo
+from app.schema.whiteboard_schema import WhiteboardInfo, WhiteboardCreate
 from app.models import whiteboard_model
-
-load_dotenv()
-
-DEFAULT_THUMBNAIL_URL = os.getenv("DEFAULT_THUMBNAIL_URL")
+from app.services import schema_converter
 
 router = APIRouter(tags=["Whiteboard"])
 
 
 @router.get("/whiteboards")
-async def get_all_whiteboards(user_id: Annotated[int, Depends(get_user_id)]):
+async def get_all_whiteboards(
+  user_id: Annotated[int, Depends(get_user_id)]
+) -> list[WhiteboardInfo]:
+  '''
+  Get all whiteboards for which the current user has access to.
+  '''
   whiteboards = whiteboard_model.get_whiteboards(user_id)
   result = []
   for board in whiteboards:
-    is_owner = True if user_id == board.owner_id else False
-    
-    if board.thumbnail_image is None:
-      thumbnail_url = DEFAULT_THUMBNAIL_URL
-
-    shared_with = whiteboard_model.get_shared_emails(board.id)
-    
-    board_info = WhiteboardInfo(
-      id=board.id,
-      title=board.title,
-      last_modified=board.last_modified,
-      is_owner=is_owner,
-      thumbnail_url=thumbnail_url,
-      shared_with=shared_with
-    )
-
+    board_info = schema_converter.whiteboard_to_whiteboardinfo(board,user_id)
     result.append(board_info)
-  
   return result
+
+
+@router.post("/whiteboards", status_code=status.HTTP_201_CREATED)
+async def create_whiteboard(
+  whiteboard_create: WhiteboardCreate,
+  user_id: Annotated[int, Depends(get_user_id)]
+):
+  '''
+  Create new whiteboard with current user as its owner.
+  '''
+  new_board = whiteboard_model.create_whiteboard(whiteboard_create, user_id)
+  board_info = schema_converter.whiteboard_to_whiteboardinfo(new_board, user_id)
+  return board_info
+  

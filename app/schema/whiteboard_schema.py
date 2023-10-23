@@ -20,3 +20,8 @@ class WhiteboardInfo(BaseModel):
   thumbnail_url: str
   shared_with: list[EmailStr]
   is_owner: bool
+
+
+class WhiteboardCreate(BaseModel):
+  title: str
+  share_with: list[EmailStr] = []
