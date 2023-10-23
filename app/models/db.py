@@ -14,14 +14,14 @@ _config = {
 
 _db = None
 
-def get_db():
+def _get_db():
   global _db
   if _db is None:
     _db = mysql.connector.connect(**_config)
   return _db
 
 
-def close_db():
+def _close_db():
   global _db
   if _db is not None:
     _db.commit()
@@ -29,11 +29,17 @@ def close_db():
   _db = None
 
 
-def execute_query(query: str):
-  _db = get_db()
-  cursor = _db.cursor(named_tuple=True)
-  cursor.execute(query)
+def execute_query(query: str, params: list = None) -> list:
+  db = _get_db()
+  
+  cursor = db.cursor(named_tuple=True)
+  cursor.execute(query, params)
   data = cursor.fetchall()
+  last_row_id = cursor.lastrowid
+  
   cursor.close()
-  close_db()
-  return data
+  _close_db()
+
+  return (data, last_row_id)
+
+
